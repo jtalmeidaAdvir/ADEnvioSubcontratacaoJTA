@@ -255,12 +255,15 @@ ORDER BY GOFO.DataIniPrevista ASC";
                 string ordemFabrico = row.Cells["OrdemFabrico"].Value.ToString();
                 double quantidadeGerar = Convert.ToDouble(row.Cells["QtdaSubc"].Value);
                 string artigoServico = row.Cells["Servico"].Value.ToString();
+                string artigo = row.Cells["Artigo"].Value.ToString();
 
                 string projeto = GetProjeto(ordemFabrico);
 
                 BSO.Compras.Documentos.AdicionaLinha(cmpBEDocumentoCompra, artigoServico);
 
                 var linha = cmpBEDocumentoCompra.Linhas.GetEdita(linhaIndex);
+                linha.PrecUnit = 0;
+                linha.Descricao = linha.Descricao + " - " + ordemFabrico + " - " + artigo; // Adiciona a Ordem de Fabrico na descrição
                 linha.Quantidade = quantidadeGerar;
                 linha.IDObra = projeto;
 
@@ -610,6 +613,7 @@ ORDER BY GOFO.DataIniPrevista ASC";
                 {
                     string ordemFabrico = row.Cells["OrdemFabrico"].Value?.ToString();
                     string artigo = row.Cells["Artigo"].Value?.ToString();
+                    string artigoservico = row.Cells["Servico"].Value.ToString();
                     double quantidadeGerar = Convert.ToDouble(row.Cells["QtdaSubc"].Value);
 
                     if (string.IsNullOrWhiteSpace(artigo) || quantidadeGerar <= 0)
@@ -620,8 +624,12 @@ ORDER BY GOFO.DataIniPrevista ASC";
                     BSO.Compras.Documentos.AdicionaLinha(cmpBEDocumentoCompra, artigo);
 
                     var linha = cmpBEDocumentoCompra.Linhas.GetEdita(linhaIndex);
+                    linha.Armazem = "ASB";
+                    linha.Localizacao = "ASB";
+                    linha.Lote = ordemFabrico; // Adiciona a Ordem de Fabrico como lote
                     linha.Quantidade = quantidadeGerar;
                     linha.IDObra = projeto;
+                    linha.Descricao = linha.Descricao + " - " + artigo + " - Serviço: " + artigoservico; // Adiciona a Ordem de Fabrico na descrição
 
                     linhaIndex++;
                 }
